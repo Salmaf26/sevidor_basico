@@ -1,5 +1,8 @@
 const { Router, response, request } = require('express');
 
+const bcryptjs = require('bcryptjs');
+
+
 const router = Router ();
 
 //http://localhost:8000/api/usuarios
@@ -13,9 +16,17 @@ router.get('/', (req = request, res = response)  => {
 
 //crear usuarios /post
 router.post('/', (req = request, res = response)  => {
-    res.status(200).json({
-        msg: 'post usuarios'
-    })
+
+    const { password, ...data } = req.body;
+
+    const salt = bcryptjs.genSaltSync();
+    const newPassword = bcryptjs.hashSync(`${data.password}`, salt);
+    
+    const response = {
+        message: "Usuario creado correctamente",
+        data
+    }
+    res.status(200).json(response);
 });
 
 //obtener usuarios por id /get
